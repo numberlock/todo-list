@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Todo List</title>
+  </head>
+  <body>
+    <div class="project-overlay">
+      <div class="project-model">
+        <input type="text" id="input-new-project" />
+        <button class="btn-add-project">Submit</button>
+      </div>
+    </div>
+
+    <div class="task-overlay">
+      <div class="task-model">
+        <label for="input-task-title">Task Title: </label>
+        <input type="text" id="input-task-title" />
+        <label for="input-task-desc">Description: </label>
+        <input type="text" id="input-task-desc" />
+        <label for="input-task-date">Due Date: </label>
+        <input type="date" id="input-task-date" />
+        <label for="priority">Task Priority:</label>
+        <select name="priority" id="input-task-priority">
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <label for="input-task-notes">Notes: </label>
+        <input type="text" id="input-task-notes" />
+        <button class="btn-add-task">Submit</button>
+      </div>
+    </div>
+
+    <nav>
+      <div class="site-name">Todo List</div>
+      <div class="nav-input">
+        <div>
+          <button class="show-add-project">+</button>
+        </div>
+        <div>
+          <button class="show-add-task">+</button>
+        </div>
+      </div>
+    </nav>
+    <main>
+      <div class="content"></div>
+    </main>
+    <script src="bundle.js"></script>
+  </body>
+</html>
