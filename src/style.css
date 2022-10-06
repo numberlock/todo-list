@@ -80,3 +80,7 @@ nav {
 .task-view {
   width: 50%;
 }
+
+.active {
+  background-color: yellow;
+}
