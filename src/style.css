@@ -8,11 +8,6 @@ body {
   font-size: 62.5%;
 }
 
-main {
-  display: flex;
-  flex-direction: column;
-}
-
 nav {
   padding: 1em 5em;
   display: flex;
@@ -74,4 +69,14 @@ nav {
 #input-task-notes,
 #input-task-desc {
   height: 5em;
+}
+
+.view-container {
+  display: flex;
+}
+.projct-view {
+  width: 50%;
+}
+.task-view {
+  width: 50%;
 }

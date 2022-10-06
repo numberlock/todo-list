@@ -16,6 +16,12 @@ const inputDate = document.querySelector("#input-task-date");
 const inputPriority = document.querySelector("#input-task-priority");
 const inputNotes = document.querySelector("#input-task-notes");
 
+let displayTasks = function () {
+  let storage = localStorage.getItem(active);
+  const displayDiv = document.querySelector(".tasks");
+  displayDiv.textContent = storage;
+};
+
 btnOpenProject.addEventListener("click", () => {
   projectOverlay.style.display = "block";
 });
@@ -31,16 +37,17 @@ btnNewProject.addEventListener("click", () => {
 });
 
 btnNewTask.addEventListener("click", () => {
-  console.log(inputDate);
-  console.log(inputDate.value);
   taskOverlay.style.display = "none";
-  taskFanctory(
-    inputTitle.value,
-    inputDesc.value,
-    inputDate.value,
-    inputPriority.value,
-    inputNotes.value
+  toStorage(
+    taskFanctory(
+      inputTitle.value,
+      inputDesc.value,
+      inputDate.value,
+      inputPriority.value,
+      inputNotes.value
+    )
   );
+  displayTasks();
 });
 
 let arrayPos = 0;
@@ -50,31 +57,39 @@ const makeProject = (name) => {
   createProject.classList.add("project");
   createProject.dataset.object = arrayPos;
   createProject.textContent = name;
+  let createButton = document.createElement("button");
   projectArray.push({ name, arrayPos });
   content.appendChild(createProject);
-  console.log(projectArray);
   arrayPos++;
 };
 
+//can probbly merge this with makeProject
 let active = ""; //pain
 function activeProject() {
   const allProjects = document.querySelectorAll(".project");
   allProjects.forEach((project) => {
     project.addEventListener("click", () => {
       active = project.dataset.object;
-      console.log(active);
+
+      displayTasks();
     });
   });
 }
+
 function taskFanctory(title, desc, date, priority, notes) {
-  return { title, desc, date, priority, notes };
+  return {
+    Title: title,
+    Desctiption: desc,
+    DueDate: date,
+    Priority: priority,
+    Notes: notes,
+  };
 }
-
-/*   localStorage[
-    `${active}`
-  ] = `Title: ${title}, Description: ${desc}, Date: ${date}, Priority: ${priority}, Notes: ${notes}`;
- */
-
-/* 
-localstorage, json, stringify
-      */
+function toStorage(object) {
+  let storage = localStorage.getItem(active);
+  if (storage == null) {
+    localStorage[`${active}`] = JSON.stringify(object);
+  } else {
+    localStorage.setItem(active, storage + JSON.stringify(object));
+  }
+}
