@@ -22,7 +22,7 @@ const projectFactory = function (newName) {
   return { name, task };
 };
 
-function projectController() {
+const projectController = (function () {
   function createProject(projectName) {
     let project = projectFactory(projectName);
     toStorage(project.name, project);
@@ -36,8 +36,8 @@ function projectController() {
     window.localStorage.removeItem(projectName);
   }
 
-  return { createProject, removeProject, toStorage };
-}
+  return { createProject, removeProject };
+})();
 
 //task
 
@@ -61,7 +61,7 @@ btnOpenTask.addEventListener("click", () => {
   taskOverlay.style.display = "block";
 });
 
-const taskController = function () {
+const taskController = (function () {
   function getProject() {
     const selectedProject = document.querySelector(".active");
     const projectName = selectedProject.textContent;
@@ -121,10 +121,10 @@ const taskController = function () {
   }
 
   return { createTask, deleteTask, updateTask, toStorage };
-};
+})();
 
 btnNewTask.addEventListener("click", () => {
-  taskController().createTask(
+  taskController.createTask(
     inputTitle,
     inputDesc,
     inputDate,
@@ -142,13 +142,11 @@ function displayTasks() {
   let tasks = localProject.task;
 
   function generateTasks(name, desc, date, priority, notes, index) {
-    taskController.toStorage();
     const tasksContainer = document.querySelector(".tasks");
 
     const removeFromLocalArray = function () {
       tasks.splice(Number(index), 1);
-
-      projectController().toStorage(projectName, localProject);
+      taskController.toStorage(projectName, localProject);
     };
 
     const divContainer = document.createElement("div");
@@ -202,7 +200,7 @@ function submitNewProject() {
 
   document.querySelector(".btn-add-project").addEventListener("click", () => {
     let newProjectName = document.querySelector("#input-new-project").value;
-    projectController().createProject(newProjectName);
+    projectController.createProject(newProjectName);
 
     displayProject(newProjectName);
     activeProject();
