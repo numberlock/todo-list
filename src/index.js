@@ -356,5 +356,3 @@ const loadProjects = (function () {
   }
   activeProject();
 })();
-
-projectController.createProject("ziga");
