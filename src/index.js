@@ -58,7 +58,11 @@ const taskFactory = function (
 };
 
 btnOpenTask.addEventListener("click", () => {
-  taskOverlay.style.display = "block";
+  if (document.querySelector(".active") === null) {
+    alert("Select a project!");
+  } else {
+    taskOverlay.style.display = "block";
+  }
 });
 
 const taskController = (function () {
@@ -89,38 +93,11 @@ const taskController = (function () {
     toStorage(project.name, project);
   }
 
-  function updateTask(
-    inputTitle,
-    inputDesc,
-    inputDate,
-    inputPriority,
-    inputNotes
-  ) {
-    let project = getProject();
-    let projectTasks = project.task[index];
-
-    projectTasks.taskName = inputTitle.value;
-    projectTasks.description = inputDesc.value;
-    projectTasks.dueDate = inputDate.value;
-    projectTasks.priority = inputPriority.value;
-    projectTasks.notes = inputNotes.value;
-    projectTasks.taskName = inputTitle.value;
-
-    toStorage(project.name, project);
-  }
-
   function toStorage(projectName, obj) {
     window.localStorage.setItem(projectName, JSON.stringify(obj));
   }
 
-  function deleteTask(index) {
-    let project = getProject();
-    project.task.splice(Number(index), 1);
-
-    toStorage(project.name, project);
-  }
-
-  return { createTask, deleteTask, updateTask, toStorage };
+  return { getProject, createTask, toStorage };
 })();
 
 btnNewTask.addEventListener("click", () => {
@@ -220,10 +197,8 @@ const createEditTaskOverlay = (function () {
   );
 })();
 
-function displayTasks() {
-  const selectedProject = document.querySelector(".active");
-  const projectName = selectedProject.textContent;
-  let localProject = JSON.parse(window.localStorage.getItem(projectName));
+const displayTasks = function () {
+  let localProject = taskController.getProject();
   let tasks = localProject.task;
 
   function generateTasks(name, desc, date, priority, notes, index) {
@@ -231,7 +206,7 @@ function displayTasks() {
 
     const removeFromLocalArray = function () {
       tasks.splice(Number(index), 1);
-      taskController.toStorage(projectName, localProject);
+      taskController.toStorage(localProject.name, localProject);
       clearTaks();
       displayTasks();
     };
@@ -243,15 +218,13 @@ function displayTasks() {
       const prio = document.querySelector("#edit-task-prio");
       const notes = document.querySelector("#edit-task-notes");
 
-      console.log(tasks[index]);
       tasks[index].taskTitle = title.value;
       tasks[index].description = desc.value;
       tasks[index].dueDate = date.value;
       tasks[index].priority = prio.value;
       tasks[index].notes = notes.value;
-      console.log(tasks[index]);
 
-      taskController.toStorage(projectName, localProject);
+      taskController.toStorage(localProject.name, localProject);
       clearTaks();
       displayTasks();
     };
@@ -260,8 +233,6 @@ function displayTasks() {
       let openTaskOverlay = document.querySelector(".edit-task-overlay");
       const index = this.dataset.index;
 
-      console.log(this);
-      console.log(this.dataset.index);
       openTaskOverlay.style.display = "block";
 
       const button = document.querySelector(".editButtonSubmit");
@@ -315,11 +286,11 @@ function displayTasks() {
 
     generateTasks(name, desc, date, priority, notes, i);
   }
-}
+};
 
 // submit project
 
-function submitNewProject() {
+(function submitNewProject() {
   btnOpenProject.addEventListener("click", () => {
     projectOverlay.style.display = "block";
   });
@@ -333,8 +304,7 @@ function submitNewProject() {
 
     projectOverlay.style.display = "none";
   });
-}
-submitNewProject(); //activation
+})();
 
 function displayProject(name) {
   let projectContainer = document.createElement("div");
@@ -361,7 +331,7 @@ function removeProject(projectRemove, projectContainer, name) {
   });
 }
 
-function activeProject() {
+const activeProject = function () {
   let allProjects = document.querySelectorAll(".project");
   allProjects.forEach((project) => {
     project.addEventListener("click", () => {
@@ -369,6 +339,22 @@ function activeProject() {
         element.classList.remove("active");
       });
       project.classList.add("active");
+      clearTaks();
+      displayTasks();
     });
   });
-}
+};
+
+const defaultProject = (function () {
+  if (localStorage.length === 0) projectController.createProject("Default");
+})();
+
+const loadProjects = (function () {
+  const localProject = window.localStorage;
+  for (let i = 0; i < localProject.length; i++) {
+    displayProject(localProject.key(i));
+  }
+  activeProject();
+})();
+
+projectController.createProject("ziga");
