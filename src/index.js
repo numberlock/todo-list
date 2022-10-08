@@ -144,13 +144,12 @@ function clearTaks() {
   }
 }
 
-function editTasks() {
+const createEditTaskOverlay = (function () {
   const htmlDiv = document.querySelector(".edit-task");
 
   //form
   const editTaskOverlay = document.createElement("div");
   editTaskOverlay.classList.add("edit-task-overlay");
-  editTaskOverlay.style.display = "block";
 
   const editTaskModel = document.createElement("div");
   editTaskModel.classList.add("edit-task-model");
@@ -174,13 +173,13 @@ function editTasks() {
   labelForDate.textContent = "Due Date:";
   const editInputDate = document.createElement("input");
   editInputDate.type = "date";
-  editInputDesc.id = "edit-task-date";
+  editInputDate.id = "edit-task-date";
 
   const labelForPrio = document.createElement("label");
   labelForPrio.for = "edit-task-prio";
   labelForPrio.textContent = "Task Priority:";
   const editInputPrio = document.createElement("select");
-  editInputDesc.id = "edit-task-prio";
+  editInputPrio.id = "edit-task-prio";
   const optionHigh = document.createElement("option");
   optionHigh.value = "high";
   optionHigh.textContent = "High";
@@ -219,7 +218,7 @@ function editTasks() {
     editInputNotes,
     editButton
   );
-}
+})();
 
 function displayTasks() {
   const selectedProject = document.querySelector(".active");
@@ -237,6 +236,41 @@ function displayTasks() {
       displayTasks();
     };
 
+    const updateTasks = function (index) {
+      const title = document.querySelector("#edit-task-title");
+      const desc = document.querySelector("#edit-task-desc");
+      const date = document.querySelector("#edit-task-date");
+      const prio = document.querySelector("#edit-task-prio");
+      const notes = document.querySelector("#edit-task-notes");
+
+      console.log(tasks[index]);
+      tasks[index].taskTitle = title.value;
+      tasks[index].description = desc.value;
+      tasks[index].dueDate = date.value;
+      tasks[index].priority = prio.value;
+      tasks[index].notes = notes.value;
+      console.log(tasks[index]);
+
+      taskController.toStorage(projectName, localProject);
+      clearTaks();
+      displayTasks();
+    };
+
+    const editTasks = function () {
+      let openTaskOverlay = document.querySelector(".edit-task-overlay");
+      const index = this.dataset.index;
+
+      console.log(this);
+      console.log(this.dataset.index);
+      openTaskOverlay.style.display = "block";
+
+      const button = document.querySelector(".editButtonSubmit");
+      button.addEventListener("click", () => {
+        openTaskOverlay.style.display = "none";
+        updateTasks(index);
+      });
+    };
+
     const divContainer = document.createElement("div");
     divContainer.classList.add(`indi-task-container`);
     const divName = document.createElement("div");
@@ -252,7 +286,8 @@ function displayTasks() {
     const divIcons = document.createElement("div");
     divIcons.classList.add("task-icons");
     const editTask = document.createElement("i");
-    editTask.classList.add("glyphicon", "glyphicon-pencil");
+    editTask.dataset.index = index;
+    editTask.classList.add("glyphicon", "glyphicon-pencil", "editTaskButton");
     const removeTask = document.createElement("i");
     removeTask.classList.add("glyphicon", "glyphicon-remove");
 
