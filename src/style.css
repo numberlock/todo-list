@@ -6,6 +6,7 @@
 
 body {
   font-size: 62.5%;
+  overflow: hidden;
 }
 
 nav {
@@ -13,35 +14,50 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgb(233, 241, 248);
+  background-color: rgb(168, 70, 70);
+}
+
+.nav-input {
+  display: flex;
+  gap: 2em;
+}
+
+.show-add-project,
+.show-add-task {
+  font-size: 3em;
+  padding: 0.2em;
 }
 
 .site-name {
-  font-size: 4em;
-}
-
-.btn-add-project {
-  width: 2em;
+  color: white;
+  font-size: 8em;
 }
 
 .content {
   display: flex;
   flex-direction: column;
-  gap: 2em;
 }
 
 .project {
-  font-size: 2em;
+  margin: 1em 1em 0em 1em;
+  font-size: 3em;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: gray;
+  background-color: rgb(201, 201, 201);
   padding: 1em;
+  transition: 0.5s;
+}
+
+.projct-view {
+  height: 100vh;
+  background-color: rgb(236, 236, 236);
 }
 
 .project-overlay,
 .task-overlay,
 .edit-task-overlay {
+  font-size: 3em;
   display: none;
   position: fixed;
   z-index: 1;
@@ -55,14 +71,14 @@ nav {
   display: flex;
   flex-direction: column;
   margin: auto;
-  width: 30em;
+  width: 25em;
   background-color: aliceblue;
   position: absolute;
 }
 
 .task-model,
 .edit-task-model {
-  height: 30em;
+  height: 28em;
 }
 .project-model {
   height: 8em;
@@ -93,14 +109,21 @@ nav {
 }
 .task-view {
   width: 50%;
+  padding: 2em;
 }
 
 .active {
-  background-color: yellow;
+  background-color: rgb(255, 255, 255);
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  gap: 5em;
 }
 
 .indi-task-container {
-  font-size: 2em;
+  font-size: 3em;
 }
 
 .task-icons {

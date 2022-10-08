@@ -1,5 +1,8 @@
 "use strict";
 import "./style.css";
+import { projectController } from "./modules/project";
+import { taskController } from "./modules/task";
+import { createEditTaskOverlay } from "./modules/render";
 
 const btnOpenProject = document.querySelector(".show-add-project");
 const btnOpenTask = document.querySelector(".show-add-task");
@@ -14,48 +17,7 @@ const inputDate = document.querySelector("#input-task-date");
 const inputPriority = document.querySelector("#input-task-priority");
 const inputNotes = document.querySelector("#input-task-notes");
 
-//project
-const projectFactory = function (newName) {
-  let name = newName;
-  let task = [];
-
-  return { name, task };
-};
-
-const projectController = (function () {
-  function createProject(projectName) {
-    let project = projectFactory(projectName);
-    toStorage(project.name, project);
-  }
-
-  function toStorage(projectName, obj) {
-    window.localStorage.setItem(projectName, JSON.stringify(obj));
-  }
-
-  function removeProject(projectName) {
-    window.localStorage.removeItem(projectName);
-  }
-
-  return { createProject, removeProject };
-})();
-
-//task
-
-const taskFactory = function (
-  inputTitle,
-  inputDesc,
-  inputDate,
-  inputPriority,
-  inputNotes
-) {
-  let taskTitle = inputTitle;
-  let description = inputDesc;
-  let dueDate = inputDate;
-  let priority = inputPriority;
-  let notes = inputNotes;
-
-  return { taskTitle, description, dueDate, priority, notes };
-};
+createEditTaskOverlay();
 
 btnOpenTask.addEventListener("click", () => {
   if (document.querySelector(".active") === null) {
@@ -64,41 +26,6 @@ btnOpenTask.addEventListener("click", () => {
     taskOverlay.style.display = "block";
   }
 });
-
-const taskController = (function () {
-  function getProject() {
-    const selectedProject = document.querySelector(".active");
-    const projectName = selectedProject.textContent;
-
-    return JSON.parse(window.localStorage.getItem(projectName));
-  }
-
-  function createTask(
-    inputTitle,
-    inputDesc,
-    inputDate,
-    inputPriority,
-    inputNotes
-  ) {
-    let project = getProject();
-    let tasks = taskFactory(
-      inputTitle.value,
-      inputDesc.value,
-      inputDate.value,
-      inputPriority.value,
-      inputNotes.value
-    );
-    project.task.push(tasks);
-
-    toStorage(project.name, project);
-  }
-
-  function toStorage(projectName, obj) {
-    window.localStorage.setItem(projectName, JSON.stringify(obj));
-  }
-
-  return { getProject, createTask, toStorage };
-})();
 
 btnNewTask.addEventListener("click", () => {
   taskController.createTask(
@@ -121,85 +48,19 @@ function clearTaks() {
   }
 }
 
-const createEditTaskOverlay = (function () {
-  const htmlDiv = document.querySelector(".edit-task");
-
-  //form
-  const editTaskOverlay = document.createElement("div");
-  editTaskOverlay.classList.add("edit-task-overlay");
-
-  const editTaskModel = document.createElement("div");
-  editTaskModel.classList.add("edit-task-model");
-
-  //object
-
-  const labelForName = document.createElement("label");
-  labelForName.for = "edit-task-title";
-  labelForName.textContent = "Task Title:";
-  const editInputName = document.createElement("input");
-  editInputName.id = "edit-task-title";
-
-  const labelForDesc = document.createElement("label");
-  labelForDesc.for = "edit-task-desc";
-  labelForDesc.textContent = "Description:";
-  const editInputDesc = document.createElement("input");
-  editInputDesc.id = "edit-task-desc";
-
-  const labelForDate = document.createElement("label");
-  labelForDate.for = "edit-task-date";
-  labelForDate.textContent = "Due Date:";
-  const editInputDate = document.createElement("input");
-  editInputDate.type = "date";
-  editInputDate.id = "edit-task-date";
-
-  const labelForPrio = document.createElement("label");
-  labelForPrio.for = "edit-task-prio";
-  labelForPrio.textContent = "Task Priority:";
-  const editInputPrio = document.createElement("select");
-  editInputPrio.id = "edit-task-prio";
-  const optionHigh = document.createElement("option");
-  optionHigh.value = "high";
-  optionHigh.textContent = "High";
-  const optionMedium = document.createElement("option");
-  optionMedium.value = "medium";
-  optionMedium.textContent = "Medium";
-  const optionLow = document.createElement("option");
-  optionLow.value = "low";
-  optionLow.textContent = "Low";
-
-  const labelForNotes = document.createElement("label");
-  labelForNotes.for = "edit-task-notes";
-  labelForNotes.textContent = "Notes:";
-
-  const editInputNotes = document.createElement("input");
-  editInputNotes.id = "edit-task-notes";
-
-  const editButton = document.createElement("button");
-  editButton.textContent = "Change";
-  editButton.classList.add("editButtonSubmit");
-
-  //append
-  htmlDiv.appendChild(editTaskOverlay);
-  editTaskOverlay.appendChild(editTaskModel);
-  editInputPrio.append(optionHigh, optionMedium, optionLow);
-  editTaskModel.append(
-    labelForName,
-    editInputName,
-    labelForDesc,
-    editInputDesc,
-    labelForDate,
-    editInputDate,
-    labelForPrio,
-    editInputPrio,
-    labelForNotes,
-    editInputNotes,
-    editButton
-  );
-})();
-
 const displayTasks = function () {
   let localProject = taskController.getProject();
   let tasks = localProject.task;
+
+  for (let i = 0; i < tasks.length; i++) {
+    const name = tasks[i].taskTitle;
+    const desc = tasks[i].description;
+    const date = tasks[i].dueDate;
+    const priority = tasks[i].priority;
+    const notes = tasks[i].notes;
+
+    generateTasks(name, desc, date, priority, notes, i);
+  }
 
   function generateTasks(name, desc, date, priority, notes, index) {
     const tasksContainer = document.querySelector(".tasks");
@@ -276,19 +137,7 @@ const displayTasks = function () {
     );
     divIcons.append(editTask, removeTask);
   }
-
-  for (let i = 0; i < tasks.length; i++) {
-    const name = tasks[i].taskTitle;
-    const desc = tasks[i].description;
-    const date = tasks[i].dueDate;
-    const priority = tasks[i].priority;
-    const notes = tasks[i].notes;
-
-    generateTasks(name, desc, date, priority, notes, i);
-  }
 };
-
-// submit project
 
 (function submitNewProject() {
   btnOpenProject.addEventListener("click", () => {
