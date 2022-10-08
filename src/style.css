@@ -40,7 +40,8 @@ nav {
 }
 
 .project-overlay,
-.task-overlay {
+.task-overlay,
+.edit-task-overlay {
   display: none;
   position: fixed;
   z-index: 1;
@@ -48,20 +49,31 @@ nav {
 }
 
 .project-model,
-.task-model {
+.task-model,
+.edit-task-model {
+  padding: 2em;
   display: flex;
   flex-direction: column;
   margin: auto;
   width: 30em;
-  height: 30em;
   background-color: aliceblue;
   position: absolute;
+}
+
+.task-model,
+.edit-task-model {
+  height: 30em;
+}
+.project-model {
+  height: 8em;
 }
 
 .project-overlay,
 .task-overlay,
 .project-model,
-.task-model {
+.task-model,
+.edit-task-overlay,
+.edit-task-model {
   top: 0;
   bottom: 0;
   left: 0;
@@ -85,4 +97,13 @@ nav {
 
 .active {
   background-color: yellow;
+}
+
+.indi-task-container {
+  font-size: 2em;
+}
+
+.task-icons {
+  display: flex;
+  gap: 1em;
 }
